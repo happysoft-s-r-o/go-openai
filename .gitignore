@@ -17,3 +17,13 @@
 # Auth token for tests
 .openai-token
 .idea
+
+# Local files
+*.local
+*.local.*
+local.*
+
+# Dev files
+*.dev
+*.dev.*
+dev.*

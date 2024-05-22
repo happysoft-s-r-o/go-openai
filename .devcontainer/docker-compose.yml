@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  go:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        WORKDIR: /go/src
+    volumes:
+      - ../:/go/src
+      - bash-history:/commandhistory
+      - vscode-extensions:/root/.vscode-server/extensions
+      - vscode-extensions-insiders:/root/.vscode-server-insiders/extensions
+
+volumes:
+  bash-history:
+  vscode-extensions:
+  vscode-extensions-insiders:

@@ -1,0 +1,55 @@
+{
+    "name": "OpenAI",
+    "dockerComposeFile": [
+        "./docker-compose.yml"
+    ],
+    "workspaceFolder": "/go/src",
+    "service": "go",
+    "remoteUser": "root",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "bash",
+                        "icon": "terminal-bash"
+                    },
+                    "zsh": {
+                        "path": "zsh"
+                    },
+                    "fish": {
+                        "path": "fish"
+                    },
+                    "tmux": {
+                        "path": "tmux",
+                        "icon": "terminal-tmux"
+                    },
+                    "pwsh": {
+                        "path": "pwsh",
+                        "icon": "terminal-powershell"
+                    }
+                },
+                "go.toolsManagement.checkForUpdates": "local",
+                "go.useLanguageServer": true,
+                "go.gopath": "/go",
+                "go.buildTags": "devel"
+            },
+            "extensions": [
+                "natqe.reload",
+                "ms-azuretools.vscode-docker",
+                "ms-vscode.makefile-tools",
+                "DavidAnson.vscode-markdownlint",
+                "rangav.vscode-thunder-client",
+                "donjayamanne.githistory",
+                "DavidAnson.vscode-markdownlint",
+                "timonwong.shellcheck",
+                "DotJoshJohnson.xml",
+                "golang.Go",
+                "mtxr.sqltools",
+                "mtxr.sqltools-driver-mysql",
+                "mtxr.sqltools-driver-pg",
+                "mtxr.sqltools-driver-sqlite"
+            ]
+        }
+    }
+}
