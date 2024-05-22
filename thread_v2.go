@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 type V2ThreadRequest struct {
@@ -156,5 +157,153 @@ func (c *V2Client) CreateMessage(ctx context.Context, threadID string, request V
 	}
 
 	err = c.sendRequest(req, &msg)
+	return
+}
+
+type V2MessagesList struct {
+	MessagesList
+	Messages []V2Message `json:"data"`
+}
+
+// ListMessage fetches all messages in the thread.
+func (c *V2Client) ListMessage(ctx context.Context, threadID string,
+	limit *int,
+	order *string,
+	after *string,
+	before *string,
+) (messages V2MessagesList, err error) {
+	urlValues := url.Values{}
+	if limit != nil {
+		urlValues.Add("limit", fmt.Sprintf("%d", *limit))
+	}
+	if order != nil {
+		urlValues.Add("order", *order)
+	}
+	if after != nil {
+		urlValues.Add("after", *after)
+	}
+	if before != nil {
+		urlValues.Add("before", *before)
+	}
+	encodedValues := ""
+	if len(urlValues) > 0 {
+		encodedValues = "?" + urlValues.Encode()
+	}
+
+	urlSuffix := fmt.Sprintf("/threads/%s/%s%s", threadID, messagesSuffix, encodedValues)
+	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix),
+		withBetaAssistantVersion(c.config.AssistantVersion))
+	if err != nil {
+		return
+	}
+
+	err = c.sendRequest(req, &messages)
+	return
+}
+
+type V2RunRequest struct {
+	RunRequest
+	AdditionalMessages []V2ThreadMessage `json:"additional_messages"`
+	TopP               float64           `json:"top_p,omitempty"`
+	Stream             bool              `json:"stream,omitempty"`
+	ToolChoice         string            `json:"tool_choice,omitempty"`
+	ResponseFormat     string            `json:"response_format,omitempty"`
+}
+
+type V2RunIncopmleteDetails struct {
+	Reason string `json:"reason"`
+}
+
+type V2Run struct {
+	Run
+	IncompleteDetails *V2RunIncopmleteDetails `json:"incomplete_details"`
+	TopP              *float64                `json:"top_p"`
+	ResponseFormat    *string                 `json:"response_format"`
+	ToolChoice        *string                 `json:"tool_choice"`
+}
+
+// CreateRun creates a new run.
+func (c *V2Client) CreateRun(
+	ctx context.Context,
+	threadID string,
+	request V2RunRequest,
+) (response V2Run, err error) {
+	urlSuffix := fmt.Sprintf("/threads/%s/runs", threadID)
+	req, err := c.newRequest(
+		ctx,
+		http.MethodPost,
+		c.fullURL(urlSuffix),
+		withBody(request),
+		withBetaAssistantVersion(c.config.AssistantVersion))
+	if err != nil {
+		return
+	}
+
+	err = c.sendRequest(req, &response)
+	return
+}
+
+// RetrieveRun retrieves a run.
+func (c *V2Client) RetrieveRun(
+	ctx context.Context,
+	threadID string,
+	runID string,
+) (response V2Run, err error) {
+	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s", threadID, runID)
+	req, err := c.newRequest(
+		ctx,
+		http.MethodGet,
+		c.fullURL(urlSuffix),
+		withBetaAssistantVersion(c.config.AssistantVersion))
+	if err != nil {
+		return
+	}
+
+	err = c.sendRequest(req, &response)
+	return
+}
+
+type V2SubmitToolOutputsRequest struct {
+	SubmitToolOutputsRequest
+	Stream bool `json:"stream,omitempty"`
+}
+
+// SubmitToolOutputs submits tool outputs.
+func (c *V2Client) SubmitToolOutputs(
+	ctx context.Context,
+	threadID string,
+	runID string,
+	request V2SubmitToolOutputsRequest) (response V2Run, err error) {
+	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s/submit_tool_outputs", threadID, runID)
+	req, err := c.newRequest(
+		ctx,
+		http.MethodPost,
+		c.fullURL(urlSuffix),
+		withBody(request),
+		withBetaAssistantVersion(c.config.AssistantVersion))
+	if err != nil {
+		return
+	}
+
+	err = c.sendRequest(req, &response)
+	return
+}
+
+// CancelRun cancels a run.
+func (c *V2Client) CancelRun(
+	ctx context.Context,
+	threadID string,
+	runID string) (response V2Run, err error) {
+	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s/cancel", threadID, runID)
+	req, err := c.newRequest(
+		ctx,
+		http.MethodPost,
+		c.fullURL(urlSuffix),
+		withBetaAssistantVersion(c.config.AssistantVersion))
+	if err != nil {
+		return
+	}
+
+	err = c.sendRequest(req, &response)
 	return
 }
