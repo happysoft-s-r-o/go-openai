@@ -115,8 +115,15 @@ type V2ContentMessageTextAnnotationFilePath struct {
 	FileID string `json:"file_id"`
 }
 
+type V2ContentMessageTextAnnotationType string
+
+const (
+	V2ContentMessageTextAnnotationTypeFilePath     V2ContentMessageTextAnnotationType = "file_path"
+	V2ContentMessageTextAnnotationTypeFileCitation V2ContentMessageTextAnnotationType = "file_citation"
+)
+
 type V2ContentMessageTextAnnotation struct {
-	Type         string                                     `json:"type"`
+	Type         V2ContentMessageTextAnnotationType         `json:"type"`
 	Text         string                                     `json:"text"`
 	Start        int                                        `json:"start_index"`
 	End          int                                        `json:"end_index"`
@@ -129,8 +136,17 @@ type V2ContentMessageText struct {
 	Annotations []V2ContentMessageTextAnnotation `json:"annotations"`
 }
 
+type V2MessageContentType string
+
+const (
+	V2MessageContentTypeText      V2MessageContentType = "text"
+	V2MessageContentTypeImageFile V2MessageContentType = "image_file"
+	V2MessageContentTypeImageUrl  V2MessageContentType = "image_url"
+)
+
 type V2MessageContent struct {
 	MessageContent
+	Type      V2MessageContentType  `json:"type"`
 	Text      *V2ContentMessageText `json:"text,omitempty"`
 	ImageFile *V2ContentImageFile   `json:"image_file,omitempty"`
 	ImageUrl  *V2ContentImageUrl    `json:"image_url,omitempty"`
