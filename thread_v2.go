@@ -40,11 +40,6 @@ type V2CodeInterpreter struct {
 	FileIDs []string `json:"file_ids"`
 }
 
-type VectorStore struct {
-	FileIDs  []string       `json:"file_ids"`
-	Metadata map[string]any `json:"metadata"`
-}
-
 type V2FileSearch struct {
 	VectorStoreIDs []string      `json:"vector_store_ids"`
 	VectorStores   []VectorStore `json:"vector_stores"`
