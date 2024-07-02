@@ -24,6 +24,10 @@ type V2Attachment struct {
 	Tools  []V2AttachmentTool `json:"tools,omitempty"`
 }
 
+const (
+	ToolTypeFileSearch ToolType = "file_search"
+)
+
 type V2AttachmentTool struct {
 	Type ToolType `json:"type"`
 }
